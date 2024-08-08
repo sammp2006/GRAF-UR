@@ -299,6 +299,7 @@ def busqueda_recursiva(nodo_actual, nodo_objetivo, grafo, visitados, camino, dis
 
 
 def algoritmo_voraz(aristas, presupuesto):
+    raise Exception("No se ha definido aun el formato de aristas")
     aristas_ordenadas = sorted(aristas, key=lambda x: x[1], reverse=True)
 
     aristas_seleccionadas = []

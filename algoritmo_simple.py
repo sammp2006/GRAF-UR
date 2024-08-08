@@ -1,5 +1,5 @@
 
-from dependencias import busqueda_recursiva
+from dependencias import busqueda_recursiva, algoritmo_voraz
 
 def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
     """
@@ -35,4 +35,18 @@ def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metr
     diccionario_concurrencia = {}
 
     for par in lista_pares_puntos:
-        pass
+        camino, distancias = busqueda_recursiva(par[0], par[1], grafo, [], [], 0)
+        for el in camino:
+            if diccionario_concurrencia.get(el) is None:
+                diccionario_concurrencia[el] = 1
+            else:
+                diccionario_concurrencia[el] += 1
+
+
+    raise Exception("No se ha definido bien como evaluar")
+    vias_mejorar = algoritmo_voraz(aristas = None, presupuesto=presupuesto)
+
+    
+
+    return vias_mejorar
+    

@@ -1,5 +1,6 @@
 from customtkinter import *
 import tkinter as tk
+from tkinter import messagebox
 ###
 from dependencias import *
 from algoritmo_aleatorio import main_algoritmo_aleatorio
@@ -220,44 +221,69 @@ class Frame_Principal(CTkFrame):
 
         ver_grafo_con_puntos(self.G, self.lista_nodos)      
 
+        mensaje_sencilla = """Este algoritmo simulara una vez el programa, y guardara\ncuales son las vias que mas se han usado, despues asignara\nsu presupuesto de la forma mas eficiente posible con un\nalgoritmo voraz, y seleccionara las vias que ve mas optimas.
+        """
+
+        mensaje_aleatoria = """Este algoritmo escogera aleatoriamente vias que esten en su\npresupuesto y que no hayan sido seleccionadas, una vez se acabe\nel presupuesto destinado, retornara las vias que escogio\naleatoriamente.
+        
+        """
+
+        mensaje_principal = """Este algoritmo sera una evolucion del algoritmo simple, ya que\nademas de decidir invertir inteligentemente con la concurrencia\nde las vias, tambien hara un analisis de proximidad geografica\npara intentar "ahorrar" presupuesto. Retorna las vias que considera\nmas importantes para invertir.
+        """
+
+        mensaje_completa = """Simula todas las posibilidades de inversion mediante recursion, y\nretorna la mejor. Esto lo hace supremamente largo e ineficiente, no es\nrecomendable usar este algoritmo para un grafo muy grande. Retorna las mejores\nvias para invertir        
+        """
+
         self.label_simulaciones = CTkLabel(master = self, text = "Selecciona las simulaciones que quieras correr: ", font = ("Open Sans", 20, "bold"))
         self.label_simulaciones.grid(row = 0, column = 0, pady = 5)
 
-        self.boton_simulacion_sencilla = CTkButton(master = self, text = "Correr Simulación Sin Inversión", fg_color="#E67E22", command = self.simulacion_sencilla)
+        self.boton_simulacion_sencilla = CTkButton(master = self, text = "Correr Simulación Simple", fg_color="#E67E22", command = self.simulacion_sencilla)
         self.boton_simulacion_sencilla.grid(row = 1, column = 0, pady = 5, padx = 4)
 
+        self.boton_que_hace_sencilla = CTkButton(master = self, text = "¿?", width=40, fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_sencilla))
+        self.boton_que_hace_sencilla.grid(row = 1, column = 1, pady = 5, padx = 2)
+
         self.label_sencilla_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_sencilla_eficiencia.grid(row = 1, column = 1, pady = 5, padx = 2)
+        self.label_sencilla_eficiencia.grid(row = 1, column = 2, pady = 5, padx = 4)
 
         self.label_sencilla_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_sencilla_duracion.grid(row = 1, column = 2, pady = 5, padx = 2)
+        self.label_sencilla_duracion.grid(row = 1, column = 3, pady = 5, padx = 4)
 
         self.boton_simulacion_aleatoria = CTkButton(master = self, text = "Correr Simulación Aleatoria", fg_color="#B9511f", command=self.simulacion_aleatoria)
         self.boton_simulacion_aleatoria.grid(row = 2, column = 0, pady = 5, padx = 4)
 
+        self.boton_que_hace_aleatoria = CTkButton(master = self, text = "¿?", width=40, fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_aleatoria))
+        self.boton_que_hace_aleatoria.grid(row = 2, column = 1, pady = 5, padx = 2)
+
         self.label_aleatoria_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_aleatoria_eficiencia.grid(row = 2, column = 1, pady = 5, padx = 2)
+        self.label_aleatoria_eficiencia.grid(row = 2, column = 2, pady = 5, padx = 4)
 
         self.label_aleatoria_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_aleatoria_duracion.grid(row = 2, column = 2, pady = 5, padx = 2)
+        self.label_aleatoria_duracion.grid(row = 2, column = 3, pady = 5, padx = 4)
 
         self.boton_simulacion_principal = CTkButton(master = self, text = "Correr Simulación Principal", fg_color="#BA310E", command = self.simulacion_principal)
         self.boton_simulacion_principal.grid(row = 3, column = 0, pady = 5, padx = 4)
 
+        self.boton_que_hace_principal = CTkButton(master = self, text = "¿?",  width=40,fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_principal))
+        self.boton_que_hace_principal.grid(row = 3, column = 1, pady = 5, padx = 2)
+
         self.label_principal_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_principal_eficiencia.grid(row = 3, column = 1, pady = 5, padx = 2)
+        self.label_principal_eficiencia.grid(row = 3, column = 2, pady = 5, padx = 4)
 
         self.label_principal_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_principal_duracion.grid(row = 3, column = 2, pady = 5, padx = 2)
+        self.label_principal_duracion.grid(row = 3, column = 3, pady = 5, padx = 4)
 
         self.boton_simulacion_completa = CTkButton(master = self, text = "Correr Busqueda Completa", fg_color="#761212", command = self.simulacion_completa)
         self.boton_simulacion_completa.grid(row = 4, column = 0, pady = 5, padx = 4)
 
+        self.boton_que_hace_completa = CTkButton(master = self, text = "¿?",  width=40, fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_completa))
+        self.boton_que_hace_completa.grid(row = 4, column = 1, pady = 5, padx = 2)
+
         self.label_completa_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_completa_eficiencia.grid(row = 4, column = 1, pady = 5, padx = 2)
+        self.label_completa_eficiencia.grid(row = 4, column = 2, pady = 5, padx = 4)
 
         self.label_completa_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_completa_duracion.grid(row = 4, column = 2, pady = 5, padx = 2)
+        self.label_completa_duracion.grid(row = 4, column = 3, pady = 5, padx = 4)
 
     def simulacion_sencilla(self):
         print(self.grafo)
@@ -265,8 +291,10 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-        
+        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
+
 
     def simulacion_aleatoria(self):
         print(self.grafo)
@@ -274,7 +302,9 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
     def simulacion_principal(self):
         print(self.grafo)
@@ -282,8 +312,9 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_principal(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-
+        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
 
     def simulacion_completa(self):
@@ -292,8 +323,9 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-        
+        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
 
 class VentanaPrincipal:
