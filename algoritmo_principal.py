@@ -6,5 +6,7 @@ def algoritmo_principal(grafo, pares_puntos, presupuesto, costo_por_metro):
     contador_tiempo = 0
     contador_pares = 0 
     for salida, destino in pares_puntos():
-        contador_pares = 0
+        contador_pares += 1
         camino_mas_corto, distancia_optima = busqueda_recursiva(nodo_actual = inicio, nodo_objetivo= destino, grafo = grafo, visitados = [], camino = [inicio], distancias = [] )
+        caminos_usados += camino_mas_corto
+        contador_tiempo += distancia_optima
