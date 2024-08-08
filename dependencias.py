@@ -180,7 +180,10 @@ def calcular_angulo_entre_rectas(m1, m2):
 
     return angulo
 
-def evaluacion(grafo, lista_mejoras,pares_de_puntos):
+def evaluacion(grafo, pares_de_puntos):
+    pass
+
+def evaluacion_n_grafo(grafo, vias_mejoradas, pares_de_puntos):
     pass
 
 def crear_cuadrantes(nodos):
