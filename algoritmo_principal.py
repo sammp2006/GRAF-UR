@@ -1,7 +1,7 @@
 import osmnx
 from dependencias import busqueda_recursiva, puntuacion
 
-def main_algoritmo_principal(grafo, pares_puntos, presupuesto, costo_por_metro):
+def main_algoritmo_principal(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
     """
     Este algoritmo es el mas elaborado de los 4 y consiste en un metodo de evaluacion que busca no tener
     unicamente en cuenta la concurrencia de las vias sino tambien la proximidad de ciertas rutas entre si para 

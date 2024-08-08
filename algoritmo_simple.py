@@ -1,5 +1,7 @@
 
-def main_algoritmo_simple(grafo):
+from dependencias import busqueda_recursiva
+
+def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
     """
     Este algoritmo solo toma en cuenta la concurrencia actual de las carreteras para hacer inversiones
     
@@ -29,7 +31,8 @@ def main_algoritmo_simple(grafo):
     Lista de arista para optimizar las calles, posteriormente se hace la simulacion de que tanto mejoro la movilidad y 
     se presentan los resultados.
     """
-    
 
-    
-    pass
+    diccionario_concurrencia = {}
+
+    for par in lista_pares_puntos:
+        pass

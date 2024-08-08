@@ -250,7 +250,7 @@ class Frame_Principal(CTkFrame):
         self.label_principal_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
         self.label_principal_duracion.grid(row = 3, column = 2, pady = 5, padx = 2)
 
-        self.boton_simulacion_completa = CTkButton(master = self, text = "Correr Busqueda Completa", fg_color="#761212", command = self.simulacion_completal)
+        self.boton_simulacion_completa = CTkButton(master = self, text = "Correr Busqueda Completa", fg_color="#761212", command = self.simulacion_completa)
         self.boton_simulacion_completa.grid(row = 4, column = 0, pady = 5, padx = 4)
 
         self.label_completa_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
@@ -265,6 +265,7 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         
 
     def simulacion_aleatoria(self):
@@ -273,6 +274,7 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
 
     def simulacion_principal(self):
         print(self.grafo)
@@ -280,12 +282,18 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
-    def simulacion_completal(self):
+        vias_mejoradas = main_algoritmo_principal(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+
+
+
+    def simulacion_completa(self):
         print(self.grafo)
         # print(self.G)
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
+        vias_mejoradas = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        
 
 
 class VentanaPrincipal:

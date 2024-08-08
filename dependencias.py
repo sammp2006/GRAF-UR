@@ -180,6 +180,9 @@ def calcular_angulo_entre_rectas(m1, m2):
 
     return angulo
 
+def evaluacion(grafo, lista_mejoras,pares_de_puntos):
+    pass
+
 def crear_cuadrantes(nodos):
     """
     Separar los nodos de un grafo en 9 cuadrantes:
