@@ -2,7 +2,10 @@ from customtkinter import *
 import tkinter as tk
 ###
 from dependencias import *
-
+from algoritmo_aleatorio import main_algoritmo_aleatorio
+from algoritmo_simple import main_algoritmo_simple
+from algoritmo_principal import main_algoritmo_principal
+from algoritmo_busqueda_completa import main_algoritmo_busqueda_completa
 
 
 class Frame_Columna(CTkFrame):
@@ -257,18 +260,32 @@ class Frame_Principal(CTkFrame):
         self.label_completa_duracion.grid(row = 4, column = 2, pady = 5, padx = 2)
 
     def simulacion_sencilla(self):
-        pass
+        print(self.grafo)
+        # print(self.G)
+        print(self.lista_nodos )
+        print(self.presupuesto)
+        print(self.costo_metro)
+        
 
     def simulacion_aleatoria(self):
-        pass
+        print(self.grafo)
+        # print(self.G)
+        print(self.lista_nodos )
+        print(self.presupuesto)
+        print(self.costo_metro)
 
     def simulacion_principal(self):
         print(self.grafo)
-        with open("grafo.txt", "w") as j:
-            j.writelines(self.grafo)
-
+        # print(self.G)
+        print(self.lista_nodos )
+        print(self.presupuesto)
+        print(self.costo_metro)
     def simulacion_completal(self):
-        pass
+        print(self.grafo)
+        # print(self.G)
+        print(self.lista_nodos )
+        print(self.presupuesto)
+        print(self.costo_metro)
 
 
 class VentanaPrincipal:

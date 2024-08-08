@@ -9,22 +9,28 @@ def importar_grafos(nombre):
     return G
 
 def transformacion_grafo(G):
+    """Recibe el grafo en formato OSMNX y lo retorna en una estructura de datos mas comoda
+    
+    retorna
+    grafo: dict= {(nodo1, nodo2): distancia_metros, etc} la tupla (nodo1 y nodo2 esta ordenada)
+
+    """
     nodos = G.nodes(data=True)
     aristas = G.edges(data=True)
-
-    for edge in G.edges:
-        G.edges[edge]["maxspeed"] = 5.5555 # 20km/h
 
     grafo = {}
     for inicio, fin, info in aristas:
         distancia = info["length"]
-        velocidad_maxima = info["maxspeed"]
-        tiempo_en_recorrer = distancia / velocidad_maxima
         llave = tuple(sorted([inicio, fin]))
-        grafo[llave] = tiempo_en_recorrer
+        grafo[llave] = distancia
     return grafo
 
 def color_aleatorio():
+    """
+    Para representar a los pares de puntos (los destinos y la casa) de los ciudadanos, escogemos un color
+    aleatorio en formato hexadeciman (255,255,255) que matplotlib pueda entender
+    
+    """
     r = random.randint(0, 255)  # Paraa el Rojo
     g = random.randint(0, 255)  # Para el Verde
     b = random.randint(0, 255)  # Para el Azul
