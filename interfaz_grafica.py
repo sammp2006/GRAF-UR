@@ -234,6 +234,8 @@ class Frame_Principal(CTkFrame):
         mensaje_completa = """Simula todas las posibilidades de inversion mediante recursion, y\nretorna la mejor. Esto lo hace supremamente largo e ineficiente, no es\nrecomendable usar este algoritmo para un grafo muy grande. Retorna las mejores\nvias para invertir        
         """
 
+        self.antes = None
+
         self.label_simulaciones = CTkLabel(master = self, text = "Selecciona las simulaciones que quieras correr: ", font = ("Open Sans", 20, "bold"))
         self.label_simulaciones.grid(row = 0, column = 0, pady = 5)
 
@@ -291,7 +293,8 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
-        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+        if self.antes is None:
+            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
@@ -302,7 +305,8 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
-        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+        if self.antes is None:
+            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
@@ -312,7 +316,8 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
-        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+        if self.antes is None:
+            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_principal(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
@@ -323,8 +328,9 @@ class Frame_Principal(CTkFrame):
         print(self.lista_nodos )
         print(self.presupuesto)
         print(self.costo_metro)
-        antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
-        vias_mejoradas = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        if self.antes is None:
+            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+        vias_mejoradas, despues = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
 

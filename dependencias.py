@@ -1,3 +1,4 @@
+import copy
 import random
 import numpy as np
 import osmnx as ox
@@ -47,8 +48,9 @@ def ver_grafo_con_puntos(G, lista_pares_nodos):
     """
     Muestra un grafo con nodos resaltados en las coordenadas especificadas.
     
-    :param G: El grafo de OSMNX.
-    :param lista_pares_nodos: Lista de pares de IDs de nodos. Cada par representa un conjunto de nodos a resaltar.
+    entradas:
+    El grafo de OSMNX.
+    la lista_pares_nodos: Lista de pares de IDs de nodos. Cada par representa un conjunto de nodos a resaltar.
     """
     fig, ax = plt.subplots(figsize=(10, 10))
     
@@ -181,10 +183,34 @@ def calcular_angulo_entre_rectas(m1, m2):
     return angulo
 
 def evaluacion(grafo, pares_de_puntos):
-    pass
+    sumatoria = 0
+    leng = 0
+    for inicio ,destino in pares_de_puntos:
+        leng += 1
+        sumatoria += busqueda_rapida(grafo, inicio, destino)
+    sumatoria /= 5.5555 
+    # Para tener el tiempo, ya que la distancia es irrelevante en nuestro problema.
+    # En este caso transformamos la distancia al tiempo que toma recorrerla a 20km/h
+    # ya que, la distancia es la misma para buenas o malas vias. La evaluacion se hace sobre distancia por que
+    # con esta unidad es mas comodo trabajar por ejemplo en los algoritmos recursivos, con los metros restantes
+    # seria raro tener el algoritmo en terminos de "segundos" restantes. Cuando "mejoramos" las vias, estamos
+    # haciendo un truco de "reducir la distancia" y aunque eso no sea preciso, el resultado es el mismo, ya que
+    # cuando aumentamos la velocidad * 3, el tiempo se reduce * 3, asi que no hay problema con esta sutileza. Y    
+    # tener un grafo de tiempo y de distancia seria muy engorroso sabiendo que el factor de cambio es 
+    # tiempo * vel(5.55555 m/s) = distancia, al reducir la distancia, el efecto en el tiempo es el mismo
+
+    return sumatoria / leng
+
 
 def evaluacion_n_grafo(grafo, vias_mejoradas, pares_de_puntos):
-    pass
+    n_grafo = copy.deepcopy(grafo)
+    for via in vias_mejoradas:
+        n_grafo[via] /= 3 # La distancia / tiempo, disminuye por 3
+
+    return evaluacion(n_grafo, pares_de_puntos)
+    
+
+    #return promedio_viajes
 
 def crear_cuadrantes(nodos):
     """
@@ -236,6 +262,37 @@ def crear_cuadrantes(nodos):
     cuadrantes[9] = set(separacion_x[2]) & set(separacion_y[0])  # SurOriente
 
     return cuadrantes
+
+
+def busqueda_rapida(grafo, start, goal):
+    """
+    Este algoritmo NO fue desarrollado ni implementado por nosotros, es un algoritmo basado en A*, y es por decirlo asi
+    una buena aproximacion de Djastktra pero con un orden de complejidad menor, lo cual sera efectivo ya que
+    nuestro programa necesita hacer muchas simulaciones, esta implementacion ayudara a reducir los tiempos para
+    todos los algoritmos
+    """
+    open_set = [] 
+    heapq.heappush(open_set, (0, start))
+    
+    came_from = {}  
+    g_score = {start: 0}  
+    
+    while open_set:
+        current_cost, current = heapq.heappop(open_set)
+        
+        if current == goal:
+            return current_cost
+        
+        for (u, v), cost in grafo.items():
+            if u == current:
+                neighbor = v
+                tentative_g_score = g_score[current] + cost
+                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g_score
+                    heapq.heappush(open_set, (tentative_g_score, neighbor))
+    
+    return float('inf')  # No se encontró un camino
 
 
 def busqueda_antigua(nodo_de_inicio, nodo_objetivo, grafo): # ALGORITMO ORIGINAL DE DIJASKTRA

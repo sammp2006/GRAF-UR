@@ -1,5 +1,7 @@
+from dependencias import evaluacion_n_grafo
 
 
+pares_de_puntos_global = []
 def main_algoritmo_busqueda_completa(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
     """
     Mediante uso de recursion, explorar todas las inversiones posibles y minimizar el tiempo de transporte
@@ -29,5 +31,37 @@ def main_algoritmo_busqueda_completa(grafo, G , lista_pares_puntos, presupuesto,
 
     Lista de arista para optimizar las calles, posteriormente se hace la simulacion de que tanto mejoro la movilidad y 
     se presentan los resultados."""    
+
+    global pares_de_puntos_global
+
+    pares_de_puntos_global = lista_pares_puntos
+
+    metros_disponibles = presupuesto / costo_metro
+
+    lista_puntos_invertidos, promedio_minimo = recu_busqueda(grafo, [] , metros_disponibles)
+
+    return lista_puntos_invertidos, promedio_minimo
+
+
+def recu_busqueda(grafo, seleccionados, metros_disponibles):
+    lista_disponibles = [nodos for nodos, metros in grafo.items() if metros <= metros_disponibles and nodos not in seleccionados]
+    if len(lista_disponibles) == 0:
+        return seleccionados,  None
+    
+    else: 
+        mini = float(INF)
+        lista_seleccion = list()
+        for disponible in lista_disponibles:
+            lista, promedio_viaje = recu_busqueda(grafo = grafo,seleccionados= seleccionados + disponible,metros_disponibles= metros_disponibles - grafo[disponible])
+            if promedio_viaje is None:
+                promedio_viaje = evaluacion_n_grafo(grafo, lista, pares_de_puntos_global)
+            
+            if promedio_viaje < mini:
+                mini = promedio_viaje
+                lista_seleccion = lista
+            
+        return lista_seleccion, mini
+
+    
 
     

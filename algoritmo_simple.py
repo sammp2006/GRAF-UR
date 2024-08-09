@@ -43,10 +43,8 @@ def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metr
                 diccionario_concurrencia[el] += 1
 
 
-    raise Exception("No se ha definido bien como evaluar")
+    raise Exception("No se ha definido bien como evaluar con el algoritmo voraz")
     vias_mejorar = algoritmo_voraz(aristas = None, presupuesto=presupuesto)
-
-    
 
     return vias_mejorar
     
