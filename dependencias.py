@@ -2,6 +2,7 @@ import copy
 import random
 import numpy as np
 import osmnx as ox
+import heapq
 import matplotlib.pyplot as plt
 
 
@@ -295,86 +296,142 @@ def busqueda_rapida(grafo, start, goal):
     return float('inf')  # No se encontró un camino
 
 
-def busqueda_antigua(nodo_de_inicio, nodo_objetivo, grafo): # ALGORITMO ORIGINAL DE DIJASKTRA
-    def dijkstra(grafo, inicial):
-        distancias = {nodo: float('inf') for tupla in grafo for nodo in tupla}
-        distancias[inicial] = 0
-        visitados = set()
+def formatear_grafo_dijkstra(grafo_original):
+    """
+    Como cambiamos la busqueda_recursiva por un algoritmo basado en dijkstra, 
+    el formato del grafo es distinto
 
-        while len(visitados) < len(distancias):
-            nodo_actual = min((nodo for nodo in distancias if nodo not in visitados), key=lambda x: distancias[x])
-            visitados.add(nodo_actual)
+    grafo_anterior_ejemplo = {
+        ('A', 'B'): 1,
+        ('A', 'C'): 4,
+        ('B', 'C'): 2,
+        ('B', 'D'): 5,
+        ('C', 'D'): 1
+    }
 
-            for tupla, peso in grafo.items():
-                if nodo_actual in tupla:
-                    vecino = tupla[0] if tupla[1] == nodo_actual else tupla[1]
-                    distancia_nueva = distancias[nodo_actual] + peso
-                    if distancia_nueva < distancias[vecino]:
-                        distancias[vecino] = distancia_nueva
+    grafo_formato_nuevo = {
+        'A': {'B': 1, 'C': 4},
+        'B': {'A': 1, 'C': 2, 'D': 5},
+        'C': {'A': 4, 'B': 2, 'D': 1},
+        'D': {'B': 5, 'C': 1}
+    }
+    """
+    # Inicializar un nuevo grafo en el formato deseado
+    grafo_nuevo = {}
+    
+    for (nodo1, nodo2), peso in grafo_original.items():
+        if nodo1 not in grafo_nuevo:
+            grafo_nuevo[nodo1] = {}
+        if nodo2 not in grafo_nuevo:
+            grafo_nuevo[nodo2] = {}
+        
+        # Añadir las conexiones bidireccionales
+        grafo_nuevo[nodo1][nodo2] = peso
+        grafo_nuevo[nodo2][nodo1] = peso
+    
+    return grafo_nuevo
 
-        return distancias
-
-    distancias = dijkstra(grafo, nodo_de_inicio)
-
-    return distancias[nodo_objetivo]
 
 
+def busqueda_intermedia(grafo_viejo, inicio, objetivo):
+    """ALGORITMO BASADO EN DIJASKTRA, NOS TOCO USARLO SOBRE EL ALGORITMO ANTERIOR DE BUSQUEDA_RECURSIVA
+    YA QUE EL ALGORITMO DE BUSQUEDA RECURSIVA ERA SIMPLEMENTE INVIABLE IMPLEMENTARLO CON GRAFOS GRANDES
+    """
+    grafo = formatear_grafo_dijkstra(grafo_viejo)
+    
+    distancias = {nodo: float('inf') for nodo in grafo}
+    distancias[inicio] = 0
+    previos = {nodo: None for nodo in grafo}
+    cola_prioridad = [(0, inicio)]  # (distancia, nodo)
+    
+    while cola_prioridad:
+        distancia_actual, nodo_actual = heapq.heappop(cola_prioridad)
+        
+        if nodo_actual == objetivo:
+            # Reconstruir el camino
+            camino = []
+            while previos[nodo_actual] is not None:
+                camino.append((previos[nodo_actual], nodo_actual))
+                nodo_actual = previos[nodo_actual]
+            camino.reverse()
+            return camino, distancias[objetivo]
+        
+        if distancia_actual > distancias[nodo_actual]:
+            continue
+        
+        for vecino, peso in grafo.get(nodo_actual, {}).items():
+            distancia = distancia_actual + peso
+            if distancia < distancias[vecino]:
+                distancias[vecino] = distancia
+                previos[vecino] = nodo_actual
+                heapq.heappush(cola_prioridad, (distancia, vecino))
+    
+    return [], float('inf')  # No se encontró un camino
 
-def busqueda_recursiva(nodo_actual, nodo_objetivo, grafo, visitados, camino, distancias, c = 0):
+
+def busqueda_antigua_recursiva(nodo_actual, nodo_objetivo, grafo, visitados, camino, distancias, c = 0):
+    """
+    Inicialmente estaba contemplado utilizar este algoritmo para
+    nuestro programa sin embargo para grafos grandes es simplemente
+    demasiado ineficiente, dejamos el algoritmo ya que es muy simple 
+    e incluso, sin embargo esta inutilizado y fue reemplazado por un 
+    algoritmo usando djasktra y colas de prioridad.    
+    """
+    
     if nodo_actual == nodo_objetivo:
-        #print("Es el objetivo:", camino)
-        return camino, distancias
+        return camino, sum(distancias)
 
     if nodo_actual in visitados:
-        #print("Está en visitados:", visitados)
-        return [], [float("inf")]
+        return [], float("inf")
 
     vecinos = {}
-    # Creamos una lista a todos los nodos a los que podemos ir
     for tupla, peso in grafo.items():
         if nodo_actual in tupla:
             vecino = tupla[0] if tupla[1] == nodo_actual else tupla[1]
             vecinos[vecino] = peso
 
     if not vecinos:
-        return [], [float("inf")]
+        return [], float("inf")
 
-    resultados_camino = []
-
-    resultados_distancias = []
     camino_mas_corto = []
-    distancia_optima = [float("inf")]
+    distancia_optima = float("inf")
 
     for vecino, peso in vecinos.items():
-        # nuevo_camino, nuevas_distancias = busqueda_recursiva(vecino, nodo_objetivo, grafo, visitados + [nodo_actual], camino + [(nodo_actual, vecino)], distancias + [peso], c = 1)
-        nuevo_camino, nuevas_distancias = busqueda_recursiva(vecino, nodo_objetivo, grafo, visitados + [nodo_actual], camino + [vecino], distancias + [peso], c = 1)
-        if sum(nuevas_distancias) < sum(distancia_optima):
-          distancia_optima = nuevas_distancias
-          camino_mas_corto = nuevo_camino
+        # Asegúrate de que `distancias` es una lista
+        nuevo_camino, nueva_distancia = busqueda_recursiva(
+            vecino, nodo_objetivo, grafo, 
+            visitados + [nodo_actual], 
+            camino + [(nodo_actual, vecino)], 
+            distancias + [peso], 
+            c = 1
+        )
+        
+        # `nueva_distancia` debería ser un número, sumando las distancias en el camino
+        if nueva_distancia < distancia_optima:
+            distancia_optima = nueva_distancia
+            camino_mas_corto = nuevo_camino
 
-        resultados_camino.append(nuevo_camino)
-        resultados_distancias.append(nuevas_distancias)
-
+    print("Resultado busqueda recursiva: \n camino corto:", camino_mas_corto, "\n distancia_optima: ", distancia_optima)
     return camino_mas_corto, distancia_optima
 
 
-def algoritmo_voraz(aristas, presupuesto):
-    raise Exception("No se ha definido aun el formato de aristas")
-    aristas_ordenadas = sorted(aristas, key=lambda x: x[1], reverse=True)
-
+def algoritmo_voraz(puntajes, G, presupuesto):
+    # Obtener todas las aristas y distancias del grafo
+    aristas = G.edges(data=True)
+    distancias = { (inicio, fin): info["length"] for inicio, fin, info in aristas }
+    
+    aristas_ordenadas = sorted(puntajes.items(), key=lambda x: x[1], reverse=True)
+    
+    presupuesto_restante = presupuesto
     aristas_seleccionadas = []
-    presupuesto_utilizado = 0
-
-    # Iterar sobre las aristas ordenadas
-    for arista in aristas_ordenadas:
-        longitud_arista = arista[0]
-        puntuacion_arista = arista[1]
-
-        # Verificar si agregar la arista excede el presupuesto
-        if presupuesto_utilizado + longitud_arista <= presupuesto:
-            aristas_seleccionadas.append(arista)
-            presupuesto_utilizado += longitud_arista
-
+    
+    for arista, puntuacion in aristas_ordenadas:
+        if arista in distancias:
+            distancia = distancias[arista]
+            if distancia <= presupuesto_restante:
+                aristas_seleccionadas.append(arista)
+                presupuesto_restante -= distancia
+    
     return aristas_seleccionadas
 
 def puntuacion(arista, concurrencia, caminos , presupuesto, k):

@@ -288,16 +288,12 @@ class Frame_Principal(CTkFrame):
         self.label_completa_duracion.grid(row = 4, column = 3, pady = 5, padx = 4)
 
     def simulacion_sencilla(self):
-        print(self.grafo)
-        # print(self.G)
-        print(self.lista_nodos )
-        print(self.presupuesto)
-        print(self.costo_metro)
         if self.antes is None:
             self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
         vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        print("vias_mejoradas: ", vias_mejoradas)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
-
+        print("despues: ", despues)
 
     def simulacion_aleatoria(self):
         print(self.grafo)
@@ -330,6 +326,7 @@ class Frame_Principal(CTkFrame):
         print(self.costo_metro)
         if self.antes is None:
             self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+            print("Self.Antes: ",self.antes)
         vias_mejoradas, despues = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
 
@@ -352,7 +349,7 @@ class VentanaPrincipal:
         self.app.mainloop()
 
     def __del__(self):
-        tk.messagebox.showinfo("Hasta Luego!", "GRAP-UR® \n\nsmorenope@unal.edu.co\sapalacioso@unal.edu.co\njdiazav@unal.edu.co\n\nIntroducción a las Ciencias de la Computación y la Programación\nUniversidad Nacional de Colombia 2024")
+        tk.messagebox.showinfo("Hasta Luego!", "GRAP-UR® \n\nsmorenope@unal.edu.co\nsapalacioso@unal.edu.co\njdiazav@unal.edu.co\n\nIntroducción a las Ciencias de la Computación y la Programación\nUniversidad Nacional de Colombia 2024")
 
 def run():
     app = VentanaPrincipal()

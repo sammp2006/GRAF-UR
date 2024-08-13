@@ -1,5 +1,5 @@
 import osmnx
-from dependencias import busqueda_recursiva, puntuacion
+from dependencias import busqueda_intermedia, puntuacion
 
 def main_algoritmo_principal(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
     """
@@ -44,6 +44,6 @@ def main_algoritmo_principal(grafo, G , lista_pares_puntos, presupuesto, costo_m
     contador_pares = 0 
     for salida, destino in pares_puntos():
         contador_pares += 1
-        camino_mas_corto, distancia_optima = busqueda_recursiva(nodo_actual = inicio, nodo_objetivo= destino, grafo = grafo, visitados = [], camino = [inicio], distancias = [] )
+        camino_mas_corto, distancia_optima = busqueda_intermedia(nodo_actual = inicio, nodo_objetivo= destino, grafo = grafo, visitados = [], camino = [inicio], distancias = [] )
         caminos_usados += camino_mas_corto
         contador_tiempo += distancia_optima
