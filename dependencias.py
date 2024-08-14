@@ -2,6 +2,7 @@ import copy
 import random
 import numpy as np
 import osmnx as ox
+import networkx as nx
 import heapq
 import matplotlib.pyplot as plt
 
@@ -71,6 +72,7 @@ def ver_grafo_con_puntos(G, lista_pares_nodos):
     
     # Resaltar los nodos
     i = 0
+    color_ciudadanos = []
     for nodos in lista_pares_nodos:
         i += 1
         # Seleccionar un color aleatorio para cada conjunto de puntos
@@ -79,7 +81,8 @@ def ver_grafo_con_puntos(G, lista_pares_nodos):
         xs, ys = zip(*[pos[node] for node in nodos if node in pos])  
         # Plotear los puntos
         ax.scatter(xs, ys, color=color, s=100, label=f'Ciudadano # {i} identificado con: {color}', edgecolor='black')
-    
+        color_ciudadanos.append(color)
+        
     # Configurar el título y etiquetas de los ejes
     ax.set_title("Pares de puntos", fontsize=20)
     ax.set_xlabel("Longitud", fontsize=14)
@@ -94,6 +97,81 @@ def ver_grafo_con_puntos(G, lista_pares_nodos):
     ax.legend()
     
     plt.show()
+
+    return color_ciudadanos
+
+def ver_grafo_con_inversion(G, lista_pares_nodos, pares_de_puntos , color_ciudadanos, titulo ="Aristas y pares de puntos resaltados"):
+    """
+    Muestra un grafo con aristas entre nodos resaltadas en rojo y pares de nodos resaltados en verde lima.
+    
+    Entradas:
+    G: El grafo de OSMNX.
+    lista_pares_nodos: Lista de pares de IDs de nodos. Cada par representa los nodos cuyas aristas deben ser resaltadas.
+    pares_de_puntos: Lista de pares de IDs de nodos. Cada par representa un conjunto de nodos a resaltar en verde lima.
+    """
+    fig, ax = plt.subplots(figsize=(12, 12))
+    
+    # Plotear el grafo
+    ox.plot_graph(
+        G,
+        node_size=10,
+        node_color="lightgrey",
+        edge_linewidth=1.0,
+        edge_color="black",
+        show=False,
+        ax=ax
+    )
+    
+    # Obtener las posiciones de los nodos
+    pos = {node: (G.nodes[node]['x'], G.nodes[node]['y']) for node in G.nodes}
+    
+    # Función para corregir pares de nodos si están invertidos
+    def corregir_pares(pares):
+        pares_corregidos = []
+        for n1, n2 in pares:
+            if n1 not in pos or n2 not in pos:
+                if n2 in pos and n1 not in pos:
+                    pares_corregidos.append((n2, n1))
+                else:
+                    print(f"Advertencia: El par de nodos ({n1}, {n2}) no está en el grafo.")
+            else:
+                pares_corregidos.append((n1, n2))
+        return pares_corregidos
+    
+    lista_pares_nodos = corregir_pares(lista_pares_nodos)
+    pares_de_puntos = corregir_pares(pares_de_puntos)
+    
+    # Resaltar las aristas entre los nodos
+    for nodos in lista_pares_nodos:
+        for i in range(len(nodos) - 1):
+            for j in range(i + 1, len(nodos)):
+                if G.has_edge(nodos[i], nodos[j]):
+                    edge = (nodos[i], nodos[j])
+                    x_coords, y_coords = zip(pos[edge[0]], pos[edge[1]])
+                    ax.plot(x_coords, y_coords, color='red', linewidth=2.5)
+    
+    contador = 0
+    for nodos in pares_de_puntos:
+        xs, ys = zip(*[pos[node] for node in nodos if node in pos])
+        ax.scatter(xs, ys, color=color_ciudadanos[contador], s=100, label=f'Ciudadano # {contador + 1}', edgecolor='black')
+        contador += 1
+    
+    # Configurar el título y etiquetas de los ejes
+    ax.set_title(titulo, fontsize=20)
+    ax.set_xlabel("Longitud", fontsize=14)
+    ax.set_ylabel("Latitud", fontsize=14)
+    
+    # Ajustar los límites de los ejes
+    xlim = (min(pos[node][0] for node in G.nodes) - 0.01, max(pos[node][0] for node in G.nodes) + 0.01)
+    ylim = (min(pos[node][1] for node in G.nodes) - 0.01, max(pos[node][1] for node in G.nodes) + 0.01)
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    
+    ax.legend()
+    
+    plt.show()
+
+
 def ver_grafo(G, titulo):
     # Crear una figura y un eje
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -188,7 +266,8 @@ def evaluacion(grafo, pares_de_puntos):
     leng = 0
     for inicio ,destino in pares_de_puntos:
         leng += 1
-        sumatoria += busqueda_rapida(grafo, inicio, destino)
+        _, dist = busqueda_intermedia(grafo, inicio, destino)
+        sumatoria += dist
     sumatoria /= 5.5555 
     # Para tener el tiempo, ya que la distancia es irrelevante en nuestro problema.
     # En este caso transformamos la distancia al tiempo que toma recorrerla a 20km/h
@@ -205,8 +284,13 @@ def evaluacion(grafo, pares_de_puntos):
 
 def evaluacion_n_grafo(grafo, vias_mejoradas, pares_de_puntos):
     n_grafo = copy.deepcopy(grafo)
+    print("*"* 20)
     for via in vias_mejoradas:
-        n_grafo[via] /= 3 # La distancia / tiempo, disminuye por 3
+        try:
+            n_grafo[via] /= 3 # La distancia y tiempo, disminuye por 3
+        except KeyError:
+            via = via[::-1]
+            n_grafo[via] /= 3
 
     return evaluacion(n_grafo, pares_de_puntos)
     
@@ -418,7 +502,7 @@ def busqueda_antigua_recursiva(nodo_actual, nodo_objetivo, grafo, visitados, cam
 def algoritmo_voraz(puntajes, G, presupuesto):
     # Obtener todas las aristas y distancias del grafo
     aristas = G.edges(data=True)
-    distancias = { (inicio, fin): info["length"] for inicio, fin, info in aristas }
+    distancias = {(inicio, fin): info["length"] for inicio, fin, info in aristas }
     
     aristas_ordenadas = sorted(puntajes.items(), key=lambda x: x[1], reverse=True)
     
@@ -429,7 +513,7 @@ def algoritmo_voraz(puntajes, G, presupuesto):
         if arista in distancias:
             distancia = distancias[arista]
             if distancia <= presupuesto_restante:
-                aristas_seleccionadas.append(arista)
+                aristas_seleccionadas.append(arista) # SE QUE ES REDUNDANTE, PERO POR ALGUNA RAZON SE ESTAN RETORNANDO TUPLAS DESORDENADAS
                 presupuesto_restante -= distancia
     
     return aristas_seleccionadas

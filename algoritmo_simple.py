@@ -36,14 +36,14 @@ def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metr
 
     for par in lista_pares_puntos:
         camino, distancias = busqueda_intermedia(grafo_viejo = grafo, inicio= par[0], objetivo= par[1])
+        print("*" * 20)
         print(camino, distancias)
+        print("*" * 20)
         for el in camino:
             if diccionario_concurrencia.get(el) is None:
                 diccionario_concurrencia[el] = 1
             else:
                 diccionario_concurrencia[el] += 1
-
-        print(diccionario_concurrencia)
 
     vias_mejorar = algoritmo_voraz(puntajes=diccionario_concurrencia, G = G, presupuesto= presupuesto)
 

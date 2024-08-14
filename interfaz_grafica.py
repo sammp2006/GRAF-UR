@@ -1,6 +1,7 @@
 from customtkinter import *
 import tkinter as tk
 from tkinter import messagebox
+from datetime import datetime, timedelta
 ###
 from dependencias import *
 from algoritmo_aleatorio import main_algoritmo_aleatorio
@@ -73,13 +74,14 @@ class Frame_Principal(CTkFrame):
         self.limpiar_self()
 
         if tipo == "barrio":
-            opciones = ('Ciudad Jardín (Sur)', 'Ciudad Salitre (Occ.)', 'El Restrepo', 'Las Nieves', 'Modelia', 'Niza')
+            opciones = ('Ciudad Jardín (Sur)', 'Ciudad Salitre (Occ.)', 'El Restrepo', 'Las Nieves', 'Modelia', 'Niza', 'Barrio Prueba(Para recursión)')
             nombre_interno = ('UPZ Ciudad Jardín, Bogotá, Colombia', 
                             'UPZ Ciudad Salitre Occidental, Bogotá, Colombia', 
                             'UPZ Restrepo, Bogotá, Colombia', 
                             'UPZ Las Nieves, Bogotá, Colombia', 
                             'UPZ Modelia, Bogotá, Colombia', 
-                            'UPZ Niza, Bogotá, Colombia')
+                            'UPZ Niza, Bogotá, Colombia', 
+                            'UPZ Parque el Salitre, Bogotá, Colombia')
             
             label = CTkLabel(master=self, text="Selecciona el Barrio Cargar", font= ("Helvetica", 30))
             label.grid(row = 0, column = 0, pady = 10, padx = 5)
@@ -134,6 +136,9 @@ class Frame_Principal(CTkFrame):
             return
 
     def cargar_grafo(self, nombre):
+        if nombre == 'UPZ Parque el Salitre, Bogotá, Colombia':
+            tk.messagebox.showinfo("Cargando", f"Este Grafo Experimental es muy pequeño, propenso a errores al seleccionar puntos")
+
         tk.messagebox.showinfo("Cargando", f"Se cargara el Grafo con la etiqueta:\n {nombre} \n\nCierra el grafo para continuar")
         try:
             self.G = importar_grafos(nombre)
@@ -219,16 +224,15 @@ class Frame_Principal(CTkFrame):
 
         self.lista_nodos = [(elegir(self.cuadrantes[a]), elegir(self.cuadrantes[b])) for (a,b) in self.lista_puntos]
 
-        ver_grafo_con_puntos(self.G, self.lista_nodos)      
+        self.color_ciudadanos = ver_grafo_con_puntos(self.G, self.lista_nodos)      
+
+        mensaje_sin_cambios = """La simulacion sin cambios hace referencia a simular los tiempos de desplazamientos de los ciudadanos pero sin cambiar el grafo osea sin haber invertido nada todavia en vias"""
 
         mensaje_sencilla = """Este algoritmo simulara una vez el programa, y guardara\ncuales son las vias que mas se han usado, despues asignara\nsu presupuesto de la forma mas eficiente posible con un\nalgoritmo voraz, y seleccionara las vias que ve mas optimas.
         """
 
         mensaje_aleatoria = """Este algoritmo escogera aleatoriamente vias que esten en su\npresupuesto y que no hayan sido seleccionadas, una vez se acabe\nel presupuesto destinado, retornara las vias que escogio\naleatoriamente.
         
-        """
-
-        mensaje_principal = """Este algoritmo sera una evolucion del algoritmo simple, ya que\nademas de decidir invertir inteligentemente con la concurrencia\nde las vias, tambien hara un analisis de proximidad geografica\npara intentar "ahorrar" presupuesto. Retorna las vias que considera\nmas importantes para invertir.
         """
 
         mensaje_completa = """Simula todas las posibilidades de inversion mediante recursion, y\nretorna la mejor. Esto lo hace supremamente largo e ineficiente, no es\nrecomendable usar este algoritmo para un grafo muy grande. Retorna las mejores\nvias para invertir        
@@ -239,41 +243,41 @@ class Frame_Principal(CTkFrame):
         self.label_simulaciones = CTkLabel(master = self, text = "Selecciona las simulaciones que quieras correr: ", font = ("Open Sans", 20, "bold"))
         self.label_simulaciones.grid(row = 0, column = 0, pady = 5)
 
-        self.boton_simulacion_sencilla = CTkButton(master = self, text = "Correr Simulación Simple", fg_color="#E67E22", command = self.simulacion_sencilla)
-        self.boton_simulacion_sencilla.grid(row = 1, column = 0, pady = 5, padx = 4)
+        self.boton_simulacion_sin_cambios = CTkButton(master = self, text = "Simulación Sin Cambios", fg_color="#E67E22", command = lambda: messagebox.showinfo("Corre otra simulacion para comparar con el grafo sin cambios"))
+        self.boton_simulacion_sin_cambios.grid(row = 1, column = 0, pady = 5, padx = 4)
+
+        self.boton_que_hace_sin_cambios = CTkButton(master = self, text = "¿?",  width=40,fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_sin_cambios))
+        self.boton_que_hace_sin_cambios.grid(row = 1, column = 1, pady = 5, padx = 2)
+
+        self.label_sin_cambios_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
+        self.label_sin_cambios_eficiencia.grid(row = 1, column = 2, pady = 5, padx = 4)
+
+        self.label_sin_cambios_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
+        self.label_sin_cambios_duracion.grid(row = 1, column = 3, pady = 5, padx = 4)
+
+        self.boton_simulacion_sencilla = CTkButton(master = self, text = "Correr Simulación Simple", fg_color="#B9511f", command = self.simulacion_sencilla)
+        self.boton_simulacion_sencilla.grid(row = 2, column = 0, pady = 5, padx = 4)
 
         self.boton_que_hace_sencilla = CTkButton(master = self, text = "¿?", width=40, fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_sencilla))
-        self.boton_que_hace_sencilla.grid(row = 1, column = 1, pady = 5, padx = 2)
+        self.boton_que_hace_sencilla.grid(row = 2, column = 1, pady = 5, padx = 2)
 
         self.label_sencilla_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_sencilla_eficiencia.grid(row = 1, column = 2, pady = 5, padx = 4)
+        self.label_sencilla_eficiencia.grid(row = 2, column = 2, pady = 5, padx = 4)
 
         self.label_sencilla_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_sencilla_duracion.grid(row = 1, column = 3, pady = 5, padx = 4)
+        self.label_sencilla_duracion.grid(row = 2, column = 3, pady = 5, padx = 4)
 
-        self.boton_simulacion_aleatoria = CTkButton(master = self, text = "Correr Simulación Aleatoria", fg_color="#B9511f", command=self.simulacion_aleatoria)
-        self.boton_simulacion_aleatoria.grid(row = 2, column = 0, pady = 5, padx = 4)
+        self.boton_simulacion_aleatoria = CTkButton(master = self, text = "Correr Simulación Aleatoria", fg_color="#BA310E", command=self.simulacion_aleatoria)
+        self.boton_simulacion_aleatoria.grid(row = 3, column = 0, pady = 5, padx = 4)
 
         self.boton_que_hace_aleatoria = CTkButton(master = self, text = "¿?", width=40, fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_aleatoria))
-        self.boton_que_hace_aleatoria.grid(row = 2, column = 1, pady = 5, padx = 2)
+        self.boton_que_hace_aleatoria.grid(row = 3, column = 1, pady = 5, padx = 2)
 
         self.label_aleatoria_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_aleatoria_eficiencia.grid(row = 2, column = 2, pady = 5, padx = 4)
+        self.label_aleatoria_eficiencia.grid(row = 3, column = 2, pady = 5, padx = 4)
 
         self.label_aleatoria_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_aleatoria_duracion.grid(row = 2, column = 3, pady = 5, padx = 4)
-
-        self.boton_simulacion_principal = CTkButton(master = self, text = "Correr Simulación Principal", fg_color="#BA310E", command = self.simulacion_principal)
-        self.boton_simulacion_principal.grid(row = 3, column = 0, pady = 5, padx = 4)
-
-        self.boton_que_hace_principal = CTkButton(master = self, text = "¿?",  width=40,fg_color = "#3498DB", command = lambda: messagebox.showinfo("¿?", mensaje_principal))
-        self.boton_que_hace_principal.grid(row = 3, column = 1, pady = 5, padx = 2)
-
-        self.label_principal_eficiencia = CTkLabel(master = self, text = "Duración trayecto por ciudadano = INF")
-        self.label_principal_eficiencia.grid(row = 3, column = 2, pady = 5, padx = 4)
-
-        self.label_principal_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
-        self.label_principal_duracion.grid(row = 3, column = 3, pady = 5, padx = 4)
+        self.label_aleatoria_duracion.grid(row = 3, column = 3, pady = 5, padx = 4)
 
         self.boton_simulacion_completa = CTkButton(master = self, text = "Correr Busqueda Completa", fg_color="#761212", command = self.simulacion_completa)
         self.boton_simulacion_completa.grid(row = 4, column = 0, pady = 5, padx = 4)
@@ -287,49 +291,63 @@ class Frame_Principal(CTkFrame):
         self.label_completa_duracion = CTkLabel(master = self, text = "Duración algoritmo = INF")
         self.label_completa_duracion.grid(row = 4, column = 3, pady = 5, padx = 4)
 
+    def simulacion_sin_cambios(self):
+        inicio_sin_cambios = datetime.now() 
+        self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+        fin_sin_cambios = datetime.now()
+        diferencia = fin_sin_cambios - inicio_sin_cambios
+        diferencia = round(diferencia.total_seconds(), 3)
+
+        self.label_sin_cambios_duracion.configure(text = f"Duración trayecto por ciudadano = {self.antes}" )
+        self.label_sin_cambios_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
+
     def simulacion_sencilla(self):
         if self.antes is None:
-            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+            self.simulacion_sin_cambios()
+
+        inicio_simple = datetime.now()
         vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-        print("vias_mejoradas: ", vias_mejoradas)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
-        print("despues: ", despues)
+        fin_simple = datetime.now()
+        print(self.antes, despues)
+        diferencia = fin_simple - inicio_simple
+        diferencia = round(diferencia.total_seconds() , 3)
+        ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Sencilla")
+
+        self.label_sencilla_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_sencilla_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
     def simulacion_aleatoria(self):
-        print(self.grafo)
-        # print(self.G)
-        print(self.lista_nodos )
-        print(self.presupuesto)
-        print(self.costo_metro)
         if self.antes is None:
-            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
+            self.simulacion_sin_cambios()
+        
+        inicio_aleatorio = datetime.now()
         vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
-
-    def simulacion_principal(self):
-        print(self.grafo)
-        # print(self.G)
-        print(self.lista_nodos )
-        print(self.presupuesto)
-        print(self.costo_metro)
-        if self.antes is None:
-            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
-        vias_mejoradas = main_algoritmo_principal(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
+        fin_aleatorio = datetime.now()
+        print(self.antes, despues)
+        diferencia = fin_aleatorio - inicio_aleatorio
+        diferencia = round(diferencia.total_seconds(), 3)
+        ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Aleatoria")
+        
+        self.label_aleatoria_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_aleatoria_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
 
     def simulacion_completa(self):
-        print(self.grafo)
-        # print(self.G)
-        print(self.lista_nodos )
-        print(self.presupuesto)
-        print(self.costo_metro)
         if self.antes is None:
-            self.antes = evaluacion(grafo= self.grafo, pares_de_puntos= self.lista_nodos)
-            print("Self.Antes: ",self.antes)
+            self.simulacion_sin_cambios()
+        
+        inicio_completo = datetime.now()
         vias_mejoradas, despues = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
-        despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
+        fin_completo = datetime.now()
+        print(self.antes, despues)
+        diferencia = fin_completo - inicio_completo
+        diferencia = round(diferencia.total_seconds(), 3)
+        ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Completa")
 
+        self.label_completa_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_completa_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
 class VentanaPrincipal:
     def __init__(self):
