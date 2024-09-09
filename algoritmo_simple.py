@@ -32,7 +32,9 @@ def main_algoritmo_simple(grafo, G , lista_pares_puntos, metros_disponibles):
     se presentan los resultados.
     """
 
-    diccionario_concurrencia = {}
+    diccionario_concurrencia = {clave: 0 for clave in grafo}
+
+    print(diccionario_concurrencia)
 
     for par in lista_pares_puntos:
         camino, distancias = busqueda_intermedia(grafo_viejo = grafo, inicio= par[0], objetivo= par[1])
