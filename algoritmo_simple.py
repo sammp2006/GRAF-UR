@@ -1,7 +1,7 @@
 from dependencias import busqueda_intermedia, algoritmo_voraz
 # from dependencias import busqueda_recursiva, algoritmo_voraz
 
-def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
+def main_algoritmo_simple(grafo, G , lista_pares_puntos, metros_disponibles):
     """
     Este algoritmo solo toma en cuenta la concurrencia actual de las carreteras para hacer inversiones
     
@@ -45,7 +45,7 @@ def main_algoritmo_simple(grafo, G , lista_pares_puntos, presupuesto, costo_metr
             else:
                 diccionario_concurrencia[el] += 1
 
-    vias_mejorar = algoritmo_voraz(puntajes=diccionario_concurrencia, G = G, presupuesto= presupuesto)
+    vias_mejorar = algoritmo_voraz(puntajes=diccionario_concurrencia, G = G, presupuesto= metros_disponibles)
 
     return vias_mejorar
     

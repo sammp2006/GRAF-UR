@@ -2,7 +2,7 @@ from dependencias import evaluacion_n_grafo
 
 pares_de_puntos_global = []
 
-def main_algoritmo_busqueda_completa(grafo, G, lista_pares_puntos, presupuesto, costo_metro):
+def main_algoritmo_busqueda_completa(grafo, G, lista_pares_puntos, metros_disponibles):
     """
     Mediante uso de recursion, explorar todas las inversiones posibles y minimizar el tiempo de transporte.
     
@@ -19,8 +19,6 @@ def main_algoritmo_busqueda_completa(grafo, G, lista_pares_puntos, presupuesto, 
     
     global pares_de_puntos_global
     pares_de_puntos_global = lista_pares_puntos
-
-    metros_disponibles = presupuesto / costo_metro
 
     lista_puntos_invertidos, promedio_minimo = recu_busqueda(grafo, [], metros_disponibles)
 

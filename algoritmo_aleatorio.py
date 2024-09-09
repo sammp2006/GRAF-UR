@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import osmnx as ox
 import random 
 
-def main_algoritmo_aleatorio(grafo, G , lista_pares_puntos, presupuesto, costo_metro):
+def main_algoritmo_aleatorio(grafo, G , lista_pares_puntos, metros_disponibles):
     """
     Este algoritmo va simplemente a invertir en las vias aleatoriamente.
     
@@ -34,7 +34,6 @@ def main_algoritmo_aleatorio(grafo, G , lista_pares_puntos, presupuesto, costo_m
     
     """
     lista_puntos_invertidos = []
-    metros_disponibles = presupuesto / costo_metro
     lista_disponibles = [nodos for nodos, metros in grafo.items() if metros <= metros_disponibles] 
     while len(lista_disponibles) > 0:
         arista_escogida = random.choice(lista_disponibles)

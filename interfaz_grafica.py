@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from dependencias import *
 from algoritmo_aleatorio import main_algoritmo_aleatorio
 from algoritmo_simple import main_algoritmo_simple
-from algoritmo_principal import main_algoritmo_principal
 from algoritmo_busqueda_completa import main_algoritmo_busqueda_completa
 
 
@@ -157,8 +156,7 @@ class Frame_Principal(CTkFrame):
         self.grafo = transformacion_grafo(self.G)
         self.cuadrantes = crear_cuadrantes(self.nodos)
 
-        self.presupuesto = tk.simpledialog.askfloat("Presupuesto", "Escribe el presupuesto que va a tener el proyecto")
-        self.costo_metro = tk.simpledialog.askfloat("Presupuesto", "Escribe el costo de construir un metro de via")
+        self.metros_disponibles = tk.simpledialog.askfloat("Metros", "Escribe los metros para construir:")
 
         self.lista_puntos = []
 
@@ -298,7 +296,7 @@ class Frame_Principal(CTkFrame):
         diferencia = fin_sin_cambios - inicio_sin_cambios
         diferencia = round(diferencia.total_seconds(), 3)
 
-        self.label_sin_cambios_duracion.configure(text = f"Duración trayecto por ciudadano = {self.antes}" )
+        self.label_sin_cambios_duracion.configure(text = f"Duración trayecto por ciudadano = {self.antes / 60} min" )
         self.label_sin_cambios_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
     def simulacion_sencilla(self):
@@ -306,7 +304,7 @@ class Frame_Principal(CTkFrame):
             self.simulacion_sin_cambios()
 
         inicio_simple = datetime.now()
-        vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        vias_mejoradas = main_algoritmo_simple(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, metros_disponibles= self.metros_disponibles)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
         fin_simple = datetime.now()
         print(self.antes, despues)
@@ -314,7 +312,7 @@ class Frame_Principal(CTkFrame):
         diferencia = round(diferencia.total_seconds() , 3)
         ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Sencilla")
 
-        self.label_sencilla_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_sencilla_duracion.configure(text = f"Duración trayecto por ciudadano = {despues/60} min" )
         self.label_sencilla_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
     def simulacion_aleatoria(self):
@@ -322,7 +320,7 @@ class Frame_Principal(CTkFrame):
             self.simulacion_sin_cambios()
         
         inicio_aleatorio = datetime.now()
-        vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        vias_mejoradas = main_algoritmo_aleatorio(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, metros_disponibles= self.metros_disponibles)
         despues = evaluacion_n_grafo(grafo= self.grafo,vias_mejoradas=vias_mejoradas, pares_de_puntos= self.lista_nodos)
         fin_aleatorio = datetime.now()
         print(self.antes, despues)
@@ -330,7 +328,7 @@ class Frame_Principal(CTkFrame):
         diferencia = round(diferencia.total_seconds(), 3)
         ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Aleatoria")
         
-        self.label_aleatoria_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_aleatoria_duracion.configure(text = f"Duración trayecto por ciudadano = {despues/60} min" )
         self.label_aleatoria_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
 
@@ -339,14 +337,14 @@ class Frame_Principal(CTkFrame):
             self.simulacion_sin_cambios()
         
         inicio_completo = datetime.now()
-        vias_mejoradas, despues = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, presupuesto=self.presupuesto, costo_metro=self.costo_metro)
+        vias_mejoradas, despues = main_algoritmo_busqueda_completa(grafo = self.grafo, G = self.G, lista_pares_puntos= self.lista_nodos, metros_disponibles=self.metros_disponibles)
         fin_completo = datetime.now()
         print(self.antes, despues)
         diferencia = fin_completo - inicio_completo
         diferencia = round(diferencia.total_seconds(), 3)
         ver_grafo_con_inversion(self.G, vias_mejoradas, self.lista_nodos, self.color_ciudadanos, "Resultados Simulacion Completa")
 
-        self.label_completa_duracion.configure(text = f"Duración trayecto por ciudadano = {despues}" )
+        self.label_completa_duracion.configure(text = f"Duración trayecto por ciudadano = {despues/60} min" )
         self.label_completa_eficiencia.configure(text = f"Duración algoritmo = {diferencia} s")
 
 class VentanaPrincipal:
